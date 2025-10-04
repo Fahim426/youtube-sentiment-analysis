@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+
+{% block title %}Profile - YouTube Sentiment Analysis{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <h1 class="mb-4">User Profile</h1>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card shadow-sm mb-4">
+            <div class="card-header bg-white">
+                <h5 class="mb-0">Account Information</h5>
+            </div>
+            <div class="card-body">
+                <div class="row mb-3">
+                    <div class="col-sm-3">
+                        <div class="rounded-circle bg-primary bg-opacity-10 d-flex align-items-center justify-content-center mx-auto" style="width: 80px; height: 80px;">
+                            <i class="bi bi-person-circle text-primary fs-1"></i>
+                        </div>
+                    </div>
+                    <div class="col-sm-9">
+                        <div class="row mb-2">
+                            <div class="col-sm-3"><strong>Username:</strong></div>
+                            <div class="col-sm-9">{{ current_user.username }}</div>
+                        </div>
+                        <div class="row mb-2">
+                            <div class="col-sm-3"><strong>Email:</strong></div>
+                            <div class="col-sm-9">{{ current_user.email }}</div>
+                        </div>
+                        <div class="row mb-2">
+                            <div class="col-sm-3"><strong>Member Since:</strong></div>
+                            <div class="col-sm-9">{{ current_user.created_at.strftime('%B %d, %Y') }}</div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-3"><strong>Last Login:</strong></div>
+                            <div class="col-sm-9">
+                                {% if current_user.last_login %}
+                                    {{ current_user.last_login.strftime('%B %d, %Y at %I:%M %p') }}
+                                {% else %}
+                                    Never
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="card shadow-sm">
+            <div class="card-header bg-white">
+                <h5 class="mb-0">Login History</h5>
+            </div>
+            <div class="card-body">
+                {% set login_history = current_user.login_history|sort(attribute='login_time', reverse=True) %}
+                {% if login_history %}
+                    <ul class="list-group list-group-flush">
+                        {% for login in login_history %}
+                        {% if loop.index <= 5 %}
+                        <li class="list-group-item">
+                            <div class="d-flex justify-content-between">
+                                <div>{{ login.login_time.strftime('%m/%d/%Y') }}</div>
+                                <small class="text-muted">{{ login.login_time.strftime('%I:%M %p') }}</small>
+                            </div>
+                            <small class="text-muted">
+                                <i class="bi bi-geo-alt"></i> {{ login.ip_address or 'Unknown' }}
+                            </small>
+                        </li>
+                        {% endif %}
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <p class="text-muted text-center mb-0">No login history found.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
